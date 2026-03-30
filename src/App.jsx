@@ -129,6 +129,7 @@ function App() {
   const touchStartY = useRef(0)
   const currentRef = useRef(current)
   const videosRef = useRef({})
+  const loopCountRef = useRef({})
   currentRef.current = current
 
   const goTo = useCallback((index) => {
@@ -137,6 +138,7 @@ function App() {
 
     lockRef.current = true
     setTransitioning(true)
+    loopCountRef.current = {}
 
     setTimeout(() => {
       setCurrent(clamped)
@@ -156,12 +158,14 @@ function App() {
       if (idx === current) {
         if (paused) {
           video.pause()
-        } else {
+        } else if (!video.ended) {
           video.play().catch(() => {})
         }
       } else {
         video.pause()
-        video.currentTime = 0
+        if (!transitioning) {
+          video.currentTime = 0
+        }
       }
     })
   }, [current, paused, transitioning])
@@ -222,6 +226,39 @@ function App() {
     }
   }, [goTo, togglePause])
 
+  const handleVideoEnd = useCallback((sceneIdx, slideIdx) => {
+    const video = videosRef.current[slideIdx]
+    if (!video) return
+    const s = scenes[sceneIdx]
+
+    // Part 1 Scene 5: loop last 2 seconds twice more after first play
+    if (s.part === 1 && s.scene === 5) {
+      const count = loopCountRef.current[sceneIdx] || 0
+      if (count < 2) {
+        loopCountRef.current[sceneIdx] = count + 1
+        video.currentTime = Math.max(0, video.duration - 2)
+        video.play().catch(() => {})
+        return
+      }
+    }
+
+    // Part 2 Scene 5: loop entire video 3 times total
+    if (s.part === 2 && s.scene === 5) {
+      const count = loopCountRef.current[sceneIdx] || 0
+      if (count < 2) {
+        loopCountRef.current[sceneIdx] = count + 1
+        video.currentTime = 0
+        video.play().catch(() => {})
+        return
+      }
+    }
+
+    // Freeze on last frame to prevent flash during transition
+    video.pause()
+    loopCountRef.current[sceneIdx] = 0
+    goTo(slideIdx + 1)
+  }, [goTo])
+
   const sceneIndex = current - 2
 
   const registerVideo = (index) => (el) => {
@@ -248,17 +285,19 @@ function App() {
 
       {/* 0 - Hero / Portada (loops forever) */}
       <section className={`panel hero ${current === 0 ? 'panel-active' : ''} ${transitioning ? 'panel-out' : ''}`}>
-        <video
-          ref={registerVideo(0)}
-          src="/videos/Portada.mp4"
-          muted
-          loop
-          playsInline
-        />
-        <div className="hero-overlay" />
-        <div className="hero-title">
-          <h1>Los Monstruos Que Habito</h1>
-          <p>por Fran</p>
+        <div className="hero-video-wrapper">
+          <video
+            ref={registerVideo(0)}
+            src="/videos/Portada.mp4"
+            muted
+            loop
+            playsInline
+          />
+          <div className="hero-overlay" />
+          <div className="hero-title">
+            <h1>Los Demonios Que Habito</h1>
+            <p>por Fran</p>
+          </div>
         </div>
         <div className="scroll-indicator">&#x25BE;</div>
       </section>
@@ -269,16 +308,12 @@ function App() {
           <div className="tw-icon">&#9888;</div>
           <h2 className="tw-title">Trigger Warning</h2>
           <div className="tw-line" />
-          <p className="tw-text">
-            Este proyecto contiene imágenes y temáticas que pueden resultar
-            perturbadoras o sensibles para algunas personas.
-          </p>
           <ul className="tw-list">
-            <li>Representaciones de monstruos y criaturas oscuras</li>
-            <li>Temáticas de angustia y emociones intensas</li>
-            <li>Contenido visual de carácter expresionista</li>
+            <li>Padecimiento psicológico</li>
+            <li>Crisis, despersonalización, distorsión de la realidad</li>
+            <li>Depresión, autolesiones, ideaciones suicidas</li>
           </ul>
-          <p className="tw-sub">Se recomienda discreción del espectador.</p>
+          <p className="tw-sub">Este proyecto busca mostrar la lucha por la supervivencia en un pozo depresivo, la construcción de una esperanza, los deseos de un futuro en un mundo mejor.</p>
         </div>
       </section>
 
@@ -299,7 +334,7 @@ function App() {
                   src={`/videos/${s.file}`}
                   muted
                   playsInline
-                  onEnded={() => goTo(i + 3)}
+                  onEnded={() => handleVideoEnd(i, i + 2)}
                 />
               )}
             </div>
@@ -314,15 +349,17 @@ function App() {
           <h2>Sobre Fran</h2>
           <div className="about-divider" />
           <p>
-            Artista visual y animadora que explora los rincones más oscuros de la
-            imaginación humana. A través de la animación y el diseño de personajes,
-            Fran da vida a criaturas que habitan entre lo bello y lo monstruoso.
+            Artista visual, ocacionalmente animador, que explora los rincones
+            más oscuros de la imaginación para darle entidad y batalla a ese dolor.
           </p>
           <p>
-            "Los Monstruos Que Habito" es un proyecto audiovisual que nace de la
-            necesidad de externalizar los demonios internos, transformándolos en
-            seres tangibles a través del arte y la animación.
+            "Los Demonios Que Habito" es un proyecto audiovisual que nace de la
+            necesidad de transformar y sanar a traves del arte.
           </p>
+          <p>
+            Esperamos que sea un mensaje alentador en la lucha contra sus propios demonios.
+          </p>
+          <p className="about-social">Redes: @las3furias</p>
         </div>
       </section>
     </div>
