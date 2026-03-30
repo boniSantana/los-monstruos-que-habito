@@ -23,6 +23,77 @@ const scenes = [
   { file: 'Parte 3 escena 3.mp4', part: 3, scene: 3 },
 ]
 
+// ── Typewriter phrases for P3E3 ──
+// Add more phrases here freely
+const P3E3_PHRASES = [
+  'Escuchar mis necesidades',
+  'Pedir ayuda',
+]
+
+const P3E3_COLORS = [
+  '#d4a574',  // warm tan
+  '#7eb8a0',  // sage green
+  '#b07db5',  // soft purple
+  '#e08686',  // muted rose
+  '#6ba3c9',  // steel blue
+  '#c9b95a',  // gold
+]
+
+function Typewriter({ active, paused }) {
+  const [phraseIndex, setPhraseIndex] = useState(0)
+  const [displayed, setDisplayed] = useState('')
+  const [phase, setPhase] = useState('typing') // typing | hold | fading | waiting
+  const intervalRef = useRef(null)
+  const timeoutRef = useRef(null)
+
+  useEffect(() => {
+    if (!active) {
+      setPhraseIndex(0)
+      setDisplayed('')
+      setPhase('typing')
+      return
+    }
+    if (paused) return
+
+    const phrase = P3E3_PHRASES[phraseIndex % P3E3_PHRASES.length]
+
+    if (phase === 'typing') {
+      if (displayed.length < phrase.length) {
+        intervalRef.current = setTimeout(() => {
+          setDisplayed(phrase.slice(0, displayed.length + 1))
+        }, 70)
+      } else {
+        timeoutRef.current = setTimeout(() => setPhase('fading'), 1500)
+      }
+    } else if (phase === 'fading') {
+      timeoutRef.current = setTimeout(() => setPhase('waiting'), 800)
+    } else if (phase === 'waiting') {
+      setPhraseIndex(prev => prev + 1)
+      setDisplayed('')
+      setPhase('typing')
+    }
+
+    return () => {
+      clearTimeout(intervalRef.current)
+      clearTimeout(timeoutRef.current)
+    }
+  }, [active, paused, phase, displayed, phraseIndex])
+
+  const color = P3E3_COLORS[phraseIndex % P3E3_COLORS.length]
+
+  return (
+    <div className="typewriter-overlay">
+      <p
+        className={`typewriter-text ${phase === 'fading' ? 'typewriter-fade' : ''}`}
+        style={{ color }}
+      >
+        {displayed}
+        <span className="typewriter-cursor">|</span>
+      </p>
+    </div>
+  )
+}
+
 // Pattern image per scene: /P{part}E{scene}.png — if the file exists it shows as background
 function patternUrl(part, scene) {
   return `/P${part}E${scene}.png`
@@ -213,14 +284,15 @@ function App() {
 
       {/* 2..N+1 - Scenes */}
       {scenes.map((s, i) => {
-        const hasPattern = current === i + 2 || Math.abs(sceneIndex - i) <= 1
+        const isP3E3 = s.part === 3 && s.scene === 3
+        const isActive = current === i + 2
         return (
           <section
             key={i}
-            className={`panel scene-panel scene-has-pattern ${current === i + 2 ? 'panel-active' : ''} ${transitioning ? 'panel-out' : ''}`}
+            className={`panel scene-panel scene-has-pattern ${isActive ? 'panel-active' : ''} ${transitioning ? 'panel-out' : ''}`}
             style={{ backgroundImage: `url('${patternUrl(s.part, s.scene)}')` }}
           >
-            <div className="scene-video-wrapper">
+            <div className={`scene-video-wrapper`}>
               {Math.abs(sceneIndex - i) <= 1 && (
                 <video
                   ref={registerVideo(i + 2)}
@@ -231,6 +303,7 @@ function App() {
                 />
               )}
             </div>
+            {/*isP3E3 && <Typewriter active={isActive} paused={paused} />*/}
           </section>
         )
       })}

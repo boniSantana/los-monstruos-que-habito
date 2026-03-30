@@ -299,6 +299,52 @@
   width: auto;
 }
 
+/* ── P3E3 crop top 30% ── */
+.scene-crop-top {
+  overflow: hidden;
+}
+
+.scene-crop-top video {
+  margin-top: -15%;
+}
+
+/* ── Typewriter overlay ── */
+.typewriter-overlay {
+  position: absolute;
+  top: 12%;
+  left: 0;
+  right: 0;
+  text-align: center;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.typewriter-text {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.8rem, 4vw, 3.2rem);
+  letter-spacing: 0.05em;
+  transition: opacity 0.8s ease, transform 0.8s ease;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.typewriter-fade {
+  opacity: 0;
+  transform: translateY(-15px);
+}
+
+.typewriter-cursor {
+  display: inline-block;
+  margin-left: 2px;
+  animation: blink 0.7s step-end infinite;
+  font-weight: 300;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
 /* ── Responsive ── */
 @media (max-width: 600px) {
   .about-content {
