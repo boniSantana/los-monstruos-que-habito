@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import './App.css'
+import { Analytics } from "@vercel/analytics/next"
 
 const scenes = [
   { file: 'Parte 1 escena 1.mp4', part: 1, scene: 1, type: 'video' },
@@ -365,6 +366,7 @@ function App() {
 
   return (
     <div className="app">
+      <Analytics/>
       <div className={`pause-indicator ${paused ? 'pause-visible' : ''}`}>
         &#10074;&#10074;
       </div>
