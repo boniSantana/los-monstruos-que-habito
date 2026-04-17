@@ -2,47 +2,62 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 import './App.css'
 
 const scenes = [
-  { file: 'Parte 1 escena 1.mp4', part: 1, scene: 1 },
-  { file: 'Parte 1 escena 2 final.mp4', part: 1, scene: 2 },
-  { file: 'Parte 1 escena 3.mp4', part: 1, scene: 3 },
-  { file: 'Parte 1 escena 4.mp4', part: 1, scene: 4 },
-  { file: 'Parte 1 escena 5 final.mp4', part: 1, scene: 5 },
-  { file: 'Parte 2 escena 1.mp4', part: 2, scene: 1 },
-  { file: 'Parte 2 escena 2 final.mp4', part: 2, scene: 2 },
-  { file: 'Parte 2 escena 3.mp4', part: 2, scene: 3 },
-  { file: 'Parte 2 escena 4.mp4', part: 2, scene: 4 },
-  { file: 'Parte 2 escena 5.mp4', part: 2, scene: 5 },
-  { file: 'Parte 2 escena 6.mp4', part: 2, scene: 6 },
-  { file: 'Parte 2 escena 7.mp4', part: 2, scene: 7 },
-  { file: 'Parte 2 escena 8.mp4', part: 2, scene: 8 },
-  { file: 'Parte 2 escena 9.mp4', part: 2, scene: 9 },
-  { file: 'Parte 2 escena 10.mp4', part: 2, scene: 10 },
-  { file: 'Parte 2 escena 11.mp4', part: 2, scene: 11 },
-  { file: 'Parte 3 escena 1 .mp4', part: 3, scene: 1 },
-  { file: 'Parte 3 escena 2.mp4', part: 3, scene: 2 },
-  { file: 'Parte 3 escena 3.mp4', part: 3, scene: 3 },
+  { file: 'Parte 1 escena 1.mp4', part: 1, scene: 1, type: 'video' },
+  { file: 'Parte 1 escena 2 final.mp4', part: 1, scene: 2, type: 'video' },
+  { file: 'Parte 1 escena 3.mp4', part: 1, scene: 3, type: 'video' },
+  { file: 'Parte 1 escena 4.mp4', part: 1, scene: 4, type: 'video' },
+  { file: 'Parte 1 escena 5 final.mp4', part: 1, scene: 5, type: 'video' },
+
+  { file: 'Parte 2 escena 1.mp4', part: 2, scene: 1, type: 'video' },
+  { file: 'Parte 2 escena 2 final.mp4', part: 2, scene: 2, type: 'video' },
+  { file: 'Parte 2 escena 3.mp4', part: 2, scene: 3, type: 'video' },
+  { file: 'Parte 2 escena 4.mp4', part: 2, scene: 4, type: 'video' },
+  { file: 'Parte 2 escena 5.mp4', part: 2, scene: 5, type: 'video' },
+  { file: 'Parte 2 escena 6.mp4', part: 2, scene: 6, type: 'video' },
+  { file: 'Parte 2 escena 7.mp4', part: 2, scene: 7, type: 'video' },
+  { file: 'Parte 2 escena 8.mp4', part: 2, scene: 8, type: 'video' },
+  { file: 'Parte 2 escena 9.mp4', part: 2, scene: 9, type: 'video' },
+  { file: 'Parte 2 escena 10.mp4', part: 2, scene: 10, type: 'video' },
+  { file: 'Parte 2 escena 11.mp4', part: 2, scene: 11, type: 'video' },
+
+  { file: 'Parte 3 escena 1 .mp4', part: 3, scene: 1, type: 'video' },
+  { file: 'Parte 3 escena 2.mp4', part: 3, scene: 2, type: 'video' },
+
+  // Parte 3 escena 3: video de fondo + overlay animado
+  {
+    file: 'Parte 3 escena 3.mp4',
+    part: 3,
+    scene: 3,
+    type: 'video-overlay',
+    overlayFile: 'Caminata final.png',
+  },
+
+  // Nueva Parte 3 escena 4
+  {
+    file: 'Parte 3 - escena 4.mp4',
+    part: 3,
+    scene: 4,
+  },
 ]
 
-// ── Typewriter phrases for P3E3 ──
-// Add more phrases here freely
 const P3E3_PHRASES = [
   'Escuchar mis necesidades',
   'Pedir ayuda',
 ]
 
 const P3E3_COLORS = [
-  '#d4a574',  // warm tan
-  '#7eb8a0',  // sage green
-  '#b07db5',  // soft purple
-  '#e08686',  // muted rose
-  '#6ba3c9',  // steel blue
-  '#c9b95a',  // gold
+  '#d4a574',
+  '#7eb8a0',
+  '#b07db5',
+  '#e08686',
+  '#6ba3c9',
+  '#c9b95a',
 ]
 
 function Typewriter({ active, paused }) {
   const [phraseIndex, setPhraseIndex] = useState(0)
   const [displayed, setDisplayed] = useState('')
-  const [phase, setPhase] = useState('typing') // typing | hold | fading | waiting
+  const [phase, setPhase] = useState('typing')
   const intervalRef = useRef(null)
   const timeoutRef = useRef(null)
 
@@ -53,6 +68,7 @@ function Typewriter({ active, paused }) {
       setPhase('typing')
       return
     }
+
     if (paused) return
 
     const phrase = P3E3_PHRASES[phraseIndex % P3E3_PHRASES.length]
@@ -94,12 +110,10 @@ function Typewriter({ active, paused }) {
   )
 }
 
-// Pattern image per scene: /P{part}E{scene}.png — if the file exists it shows as background
 function patternUrl(part, scene) {
   return `/P${part}E${scene}.png`
 }
 
-// Slug for each section (used in URL hash)
 function slideSlug(index) {
   if (index === 0) return 'portada'
   if (index === 1) return 'trigger-warning'
@@ -125,11 +139,15 @@ function App() {
   const [current, setCurrent] = useState(() => slugToIndex(window.location.hash))
   const [transitioning, setTransitioning] = useState(false)
   const [paused, setPaused] = useState(false)
+  const [soundEnabled, setSoundEnabled] = useState(false)
+
   const lockRef = useRef(false)
   const touchStartY = useRef(0)
   const currentRef = useRef(current)
   const videosRef = useRef({})
   const loopCountRef = useRef({})
+  const slowTailAppliedRef = useRef({})
+
   currentRef.current = current
 
   const goTo = useCallback((index) => {
@@ -139,11 +157,13 @@ function App() {
     lockRef.current = true
     setTransitioning(true)
     loopCountRef.current = {}
+    slowTailAppliedRef.current = {}
 
     setTimeout(() => {
       setCurrent(clamped)
       setPaused(false)
       window.history.replaceState(null, '', '#' + slideSlug(clamped))
+
       setTimeout(() => {
         setTransitioning(false)
         lockRef.current = false
@@ -151,10 +171,28 @@ function App() {
     }, 300)
   }, [])
 
+  const applyScenePlaybackRules = useCallback((video, scene) => {
+    if (!video || !scene) return
+
+    // default
+    video.playbackRate = 1
+
+    // Parte 2 escena 5 y 7: toda la escena a 0.75x
+    if (scene.part === 2 && (scene.scene === 5 || scene.scene === 7)) {
+      video.playbackRate = 0.75
+    }
+  }, [])
+
   useEffect(() => {
     Object.entries(videosRef.current).forEach(([key, video]) => {
       if (!video) return
-      const idx = parseInt(key)
+
+      const idx = parseInt(key, 10)
+      const scene = idx >= 2 && idx < 2 + scenes.length ? scenes[idx - 2] : null
+
+      video.muted = !soundEnabled
+      applyScenePlaybackRules(video, scene)
+
       if (idx === current) {
         if (paused) {
           video.pause()
@@ -163,14 +201,32 @@ function App() {
         }
       } else {
         video.pause()
+        slowTailAppliedRef.current[idx] = false
         if (!transitioning) {
           video.currentTime = 0
+          video.playbackRate = 1
         }
       }
     })
-  }, [current, paused, transitioning])
+  }, [current, paused, transitioning, soundEnabled, applyScenePlaybackRules])
 
-  // Set initial hash
+  useEffect(() => {
+    if (!soundEnabled) return
+
+    Object.entries(videosRef.current).forEach(([key, video]) => {
+      if (!video) return
+      const idx = parseInt(key, 10)
+      const scene = idx >= 2 && idx < 2 + scenes.length ? scenes[idx - 2] : null
+      video.muted = false
+      applyScenePlaybackRules(video, scene)
+    })
+
+    const currentVideo = videosRef.current[current]
+    if (currentVideo && !paused) {
+      currentVideo.play().catch(() => {})
+    }
+  }, [soundEnabled, current, paused, applyScenePlaybackRules])
+
   useEffect(() => {
     if (!window.location.hash) {
       window.history.replaceState(null, '', '#' + slideSlug(0))
@@ -179,6 +235,10 @@ function App() {
 
   const togglePause = useCallback(() => {
     setPaused(p => !p)
+  }, [])
+
+  const enableSound = useCallback(() => {
+    setSoundEnabled(true)
   }, [])
 
   useEffect(() => {
@@ -226,12 +286,50 @@ function App() {
     }
   }, [goTo, togglePause])
 
-  const handleVideoEnd = useCallback((sceneIdx, slideIdx) => {
+  const handleVideoTimeUpdate = useCallback((sceneIdx, slideIdx) => {
+    const video = videosRef.current[slideIdx]
+    if (!video) return
+
+    const s = scenes[sceneIdx]
+    if (!s) return
+
+    // Parte 2 escena 6: solo el último segundo a 0.75x
+    if (s.part === 2 && s.scene === 6) {
+      const duration = video.duration || 0
+      if (!duration) return
+
+      const shouldSlowTail = video.currentTime >= Math.max(0, duration - 1)
+
+      if (shouldSlowTail && !slowTailAppliedRef.current[slideIdx]) {
+        video.playbackRate = 0.75
+        slowTailAppliedRef.current[slideIdx] = true
+      } else if (!shouldSlowTail && slowTailAppliedRef.current[slideIdx]) {
+        video.playbackRate = 1
+        slowTailAppliedRef.current[slideIdx] = false
+      }
+    }
+  }, [])
+
+  const handleVideoLoadedMetadata = useCallback((sceneIdx, slideIdx) => {
     const video = videosRef.current[slideIdx]
     if (!video) return
     const s = scenes[sceneIdx]
+    if (!s) return
 
-    // Part 1 Scene 5: loop last 2 seconds twice more after first play
+    slowTailAppliedRef.current[slideIdx] = false
+    applyScenePlaybackRules(video, s)
+  }, [applyScenePlaybackRules])
+
+  const handleVisualEnd = useCallback((slideIdx) => {
+    goTo(slideIdx + 1)
+  }, [goTo])
+
+  const handleVideoEnd = useCallback((sceneIdx, slideIdx) => {
+    const video = videosRef.current[slideIdx]
+    if (!video) return
+
+    const s = scenes[sceneIdx]
+
     if (s.part === 1 && s.scene === 5) {
       const count = loopCountRef.current[sceneIdx] || 0
       if (count < 2) {
@@ -242,7 +340,6 @@ function App() {
       }
     }
 
-    // Part 2 Scene 5: loop entire video 3 times total
     if (s.part === 2 && s.scene === 5) {
       const count = loopCountRef.current[sceneIdx] || 0
       if (count < 2) {
@@ -253,8 +350,9 @@ function App() {
       }
     }
 
-    // Freeze on last frame to prevent flash during transition
     video.pause()
+    video.playbackRate = 1
+    slowTailAppliedRef.current[slideIdx] = false
     loopCountRef.current[sceneIdx] = 0
     goTo(slideIdx + 1)
   }, [goTo])
@@ -267,12 +365,10 @@ function App() {
 
   return (
     <div className="app">
-      {/* Pause indicator */}
       <div className={`pause-indicator ${paused ? 'pause-visible' : ''}`}>
         &#10074;&#10074;
       </div>
 
-      {/* Progress dots */}
       <nav className="dots">
         {Array.from({ length: TOTAL }, (_, i) => (
           <button
@@ -283,13 +379,13 @@ function App() {
         ))}
       </nav>
 
-      {/* 0 - Hero / Portada (loops forever) */}
+      {/* 0 - Portada */}
       <section className={`panel hero ${current === 0 ? 'panel-active' : ''} ${transitioning ? 'panel-out' : ''}`}>
         <div className="hero-video-wrapper">
           <video
             ref={registerVideo(0)}
             src="/videos/Portada.mp4"
-            muted
+            muted={!soundEnabled}
             loop
             playsInline
           />
@@ -313,32 +409,79 @@ function App() {
             <li>Crisis, despersonalización, distorsión de la realidad</li>
             <li>Depresión, autolesiones, ideaciones suicidas</li>
           </ul>
-          <p className="tw-sub">Este proyecto busca mostrar la lucha por la supervivencia en un pozo depresivo, la construcción de una esperanza, los deseos de un futuro en un mundo mejor.</p>
+          <p className="tw-sub">
+            Este proyecto busca mostrar la lucha por la supervivencia en un pozo depresivo,
+            la construcción de una esperanza, los deseos de un futuro en un mundo mejor.
+          </p>
+
+          <button
+            className="sound-button"
+            onClick={enableSound}
+            type="button"
+          >
+            {soundEnabled ? '🔊 Sonido activado' : '🔇 Activar sonido'}
+          </button>
         </div>
       </section>
 
-      {/* 2..N+1 - Scenes */}
+      {/* Escenas */}
       {scenes.map((s, i) => {
-        const isP3E3 = s.part === 3 && s.scene === 3
-        const isActive = current === i + 2
+        const slideIdx = i + 2
+        const isActive = current === slideIdx
+        const shouldMountMedia = Math.abs(sceneIndex - i) <= 1
+
         return (
           <section
-            key={i}
+            key={`${s.part}-${s.scene}`}
             className={`panel scene-panel scene-has-pattern ${isActive ? 'panel-active' : ''} ${transitioning ? 'panel-out' : ''}`}
             style={{ backgroundImage: `url('${patternUrl(s.part, s.scene)}')` }}
           >
-            <div className={`scene-video-wrapper`}>
-              {Math.abs(sceneIndex - i) <= 1 && (
+            <div className="scene-video-wrapper">
+              {shouldMountMedia && s.type === 'video' && (
                 <video
-                  ref={registerVideo(i + 2)}
+                  ref={registerVideo(slideIdx)}
                   src={`/videos/${s.file}`}
-                  muted
+                  muted={!soundEnabled}
                   playsInline
-                  onEnded={() => handleVideoEnd(i, i + 2)}
+                  onLoadedMetadata={() => handleVideoLoadedMetadata(i, slideIdx)}
+                  onTimeUpdate={() => handleVideoTimeUpdate(i, slideIdx)}
+                  onEnded={() => handleVideoEnd(i, slideIdx)}
                 />
               )}
+
+            {shouldMountMedia && s.type === 'video-overlay' && (
+  <>
+    <video
+      ref={registerVideo(slideIdx)}
+      src={`/videos/${s.file}`}
+      muted={!soundEnabled}
+      playsInline
+      onLoadedMetadata={() => handleVideoLoadedMetadata(i, slideIdx)}
+      onTimeUpdate={() => handleVideoTimeUpdate(i, slideIdx)}
+      onEnded={() => handleVideoEnd(i, slideIdx)}
+    />
+    <img
+      className={`walking-overlay ${isActive && !paused ? 'walking-overlay-active' : ''}`}
+      src={`/${s.overlayFile}`}
+      alt=""
+      aria-hidden="true"
+    />
+  </>
+)}
+
             </div>
-            {/*isP3E3 && <Typewriter active={isActive} paused={paused} />*/}
+
+            {/* {s.part === 3 && s.scene === 3 && <Typewriter active={isActive} paused={paused} />} */}
+
+            {s.type === 'gif' && isActive && (
+              <button
+                type="button"
+                className="gif-next-hitarea"
+                onClick={() => handleVisualEnd(slideIdx)}
+                aria-label="Continuar"
+                title="Continuar"
+              />
+            )}
           </section>
         )
       })}
