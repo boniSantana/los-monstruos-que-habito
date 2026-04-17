@@ -1,4 +1,17 @@
-/* App container - no scroll, full viewport */
+/* ── Base ── */
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+* {
+  box-sizing: border-box;
+}
+
 .app {
   width: 100vw;
   height: 100vh;
@@ -18,9 +31,10 @@
   justify-content: center;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1),
-              transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
   transform: scale(0.96) translateY(20px);
+  transition:
+    opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .panel-active {
@@ -71,6 +85,7 @@
   z-index: 100;
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 8px;
 }
 
@@ -96,32 +111,43 @@
   border-color: rgba(255, 255, 255, 0.7);
 }
 
+/* ── Shared video wrappers ── */
+.scene-video-wrapper,
+.hero-video-wrapper {
+  position: relative;
+  overflow: hidden;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 /* ── Hero ── */
 .hero {
   padding: 16px;
 }
 
 .hero-video-wrapper {
-  position: relative;
-  max-width: fit-content;
+  width: auto;
+  max-width: 90vw;
+  max-height: 80vh;
   border-radius: 4px;
-  overflow: hidden;
   z-index: 1;
 }
 
 .hero-video-wrapper video {
   display: block;
-  max-height: 80vh;
-  max-width: 90vw;
   width: auto;
+  height: auto;
+  max-width: 90vw;
+  max-height: 80vh;
   object-fit: contain;
+  background: #000;
 }
 
 .hero-overlay {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  inset: auto 0 0 0;
   height: 250px;
   background: linear-gradient(transparent, rgba(0, 0, 0, 0.85));
   pointer-events: none;
@@ -129,14 +155,16 @@
 
 .hero-title {
   position: absolute;
-  bottom: 40px;
   left: 0;
   right: 0;
-  text-align: center;
+  bottom: 40px;
   z-index: 2;
+  text-align: center;
+  padding: 0 20px;
 }
 
 .hero-title h1 {
+  margin: 0;
   font-size: clamp(2rem, 5vw, 4rem);
   letter-spacing: 0.15em;
   text-transform: uppercase;
@@ -145,35 +173,44 @@
 }
 
 .hero-title p {
+  margin-top: 8px;
   font-size: 1rem;
   color: rgba(255, 255, 255, 0.6);
-  margin-top: 8px;
   letter-spacing: 0.3em;
   text-transform: uppercase;
 }
 
 .scroll-indicator {
   position: absolute;
-  bottom: 30px;
   left: 50%;
+  bottom: 24px;
   transform: translateX(-50%);
-  z-index: 2;
-  animation: bounce 2s infinite;
-  color: rgba(255, 255, 255, 0.4);
+  z-index: 3;
+  color: rgba(255, 255, 255, 0.45);
   font-size: 1.5rem;
+  line-height: 1;
+  animation: bounce 2s infinite;
+  pointer-events: none;
 }
 
 @keyframes bounce {
-  0%, 100% { transform: translateX(-50%) translateY(0); }
-  50% { transform: translateX(-50%) translateY(10px); }
+  0%,
+  100% {
+    transform: translateX(-50%) translateY(0);
+  }
+  50% {
+    transform: translateX(-50%) translateY(10px);
+  }
 }
 
 /* ── Trigger Warning ── */
 .tw-panel {
   flex-direction: column;
+  padding: 24px;
 }
 
 .tw-content {
+  width: 100%;
   max-width: 600px;
   text-align: center;
   padding: 40px;
@@ -188,8 +225,15 @@
 }
 
 @keyframes tw-pulse {
-  0%, 100% { opacity: 0.7; text-shadow: 0 0 20px rgba(192, 57, 43, 0.3); }
-  50% { opacity: 1; text-shadow: 0 0 35px rgba(192, 57, 43, 0.6); }
+  0%,
+  100% {
+    opacity: 0.7;
+    text-shadow: 0 0 20px rgba(192, 57, 43, 0.3);
+  }
+  50% {
+    opacity: 1;
+    text-shadow: 0 0 35px rgba(192, 57, 43, 0.6);
+  }
 }
 
 .tw-title {
@@ -246,9 +290,11 @@
 /* ── About ── */
 .about-panel {
   flex-direction: column;
+  padding: 24px;
 }
 
 .about-content {
+  width: 100%;
   max-width: 700px;
   text-align: center;
   padding: 40px;
@@ -289,20 +335,20 @@
 .scene-video-wrapper {
   width: 100%;
   max-width: 95vw;
+  max-height: 94vh;
   border-radius: 4px;
-  overflow: hidden;
-  background: #000;
 }
 
 .scene-video-wrapper video {
   width: 100%;
   height: auto;
+  max-height: 94vh;
   display: block;
   object-fit: contain;
-  max-height: 94vh;
+  background: #000;
 }
 
-/* Scene with pattern background (auto from P{part}E{scene}.png) */
+/* Scene with pattern background */
 .scene-has-pattern {
   background-repeat: repeat;
   background-size: auto;
@@ -312,17 +358,16 @@
 .scene-has-pattern .scene-video-wrapper {
   max-width: fit-content;
   background: transparent;
-  position: relative;
   z-index: 1;
 }
 
 .scene-has-pattern .scene-video-wrapper video {
-  max-height: 80vh;
-  max-width: 90vw;
   width: auto;
+  max-width: 90vw;
+  max-height: 80vh;
 }
 
-/* ── P3E3 crop top 30% ── */
+/* ── Optional crop ── */
 .scene-crop-top {
   overflow: hidden;
 }
@@ -364,57 +409,16 @@
 }
 
 @keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
-}
-
-/* ── Responsive ── */
-@media (max-width: 600px) {
-  .about-content {
-    padding: 24px;
+  0%,
+  100% {
+    opacity: 1;
   }
-
-  .scene-panel {
-    padding: 16px;
-  }
-
-  .dots {
-    right: 10px;
-    gap: 6px;
-  }
-
-  .dot {
-    width: 6px;
-    height: 6px;
-  }
-
-  /* Mobile: portada full-bleed como antes */
-  .hero {
-    padding: 0;
-  }
-
-  .hero-video-wrapper {
-    position: absolute;
-    inset: 0;
-    max-width: none;
-    width: 100%;
-    height: 100%;
-    border-radius: 0;
-  }
-
-  .hero-video-wrapper video {
-    max-height: none;
-    max-width: none;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .hero-title {
-    bottom: 80px;
+  50% {
+    opacity: 0;
   }
 }
 
+/* ── Sound button ── */
 .sound-button {
   margin-top: 24px;
   padding: 12px 20px;
@@ -424,25 +428,10 @@
   font-size: 1rem;
   border-radius: 999px;
   cursor: pointer;
-  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
-}
-
-.sound-button:hover {
-  transform: scale(1.03);
-  background: rgba(255, 255, 255, 0.14);
-  border-color: rgba(255, 255, 255, 0.7);
-}
-
-.sound-button {
-  margin-top: 24px;
-  padding: 12px 20px;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  background: rgba(255, 255, 255, 0.08);
-  color: white;
-  font-size: 1rem;
-  border-radius: 999px;
-  cursor: pointer;
-  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease;
   position: relative;
   z-index: 10;
 }
@@ -453,42 +442,40 @@
   border-color: rgba(255, 255, 255, 0.7);
 }
 
-.scene-video-wrapper {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
-
-.scene-video-wrapper video,
-.scene-gif {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-.walking-overlay-active {
-  opacity: 1;
-}
-
+/* ── Walking overlay ── */
 .walking-overlay {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, 0%);
-
-  max-width: 60%;
-  max-height: 60%;
-
+  transform: translate(-50%, -50%);
+  width: min(60vw, 420px);
+  max-width: 80vw;
+  max-height: 70vh;
+  height: auto;
+  object-fit: contain;
   pointer-events: none;
   opacity: 0;
-
-  z-index: 5; /* 👈 clave */
+  z-index: 5;
 }
 
 .walking-overlay-active {
   opacity: 1;
-  transition: opacity 1s ease;
+  transition: opacity 0.8s ease;
+}
+
+/* ── GIF / centered image ── */
+.scene-gif {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(60vw, 420px);
+  max-width: 80vw;
+  max-height: 70vh;
+  height: auto;
+  object-fit: contain;
+  pointer-events: none;
+  z-index: 5;
 }
 
 .gif-next-hitarea {
@@ -498,7 +485,100 @@
   background: transparent;
   cursor: pointer;
 }
-.scene-video-wrapper video {
-  position: relative;
-  z-index: 1;
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .dots {
+    right: 10px;
+    gap: 6px;
+  }
+
+  .dot {
+    width: 6px;
+    height: 6px;
+  }
+
+  .tw-panel,
+  .about-panel {
+    padding: 16px;
+  }
+
+  .tw-content,
+  .about-content {
+    padding: 24px 20px;
+  }
+
+  .scene-panel {
+    padding: 12px;
+  }
+
+  .scene-video-wrapper {
+    max-width: 100%;
+    max-height: 88vh;
+  }
+
+  .scene-video-wrapper video,
+  .hero-video-wrapper video {
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+    object-fit: contain;
+    background: #000;
+  }
+
+  .walking-overlay,
+  .scene-gif {
+    width: 75vw;
+    max-width: 75vw;
+    max-height: 50vh;
+  }
+
+  .hero {
+    padding: 0;
+  }
+
+  .hero-video-wrapper {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
+    border-radius: 0;
+  }
+
+  .hero-video-wrapper video {
+    width: 100%;
+    height: auto;
+    max-height: 100%;
+    object-fit: contain;
+  }
+
+  .hero-title {
+    bottom: 72px;
+    padding: 0 18px;
+  }
+
+  .hero-title h1 {
+    font-size: clamp(1.6rem, 8vw, 2.5rem);
+    letter-spacing: 0.08em;
+  }
+
+  .hero-title p {
+    font-size: 0.9rem;
+    letter-spacing: 0.18em;
+  }
+
+  .scroll-indicator {
+    bottom: 20px;
+    font-size: 1.35rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .hero-title {
+    bottom: 48px;
+  }
+
+  .scroll-indicator {
+    bottom: 28px;
+  }
 }
