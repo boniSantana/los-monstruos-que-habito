@@ -35,7 +35,7 @@ const scenes = [
 
   // Nueva Parte 3 escena 4
   {
-    file: 'Parte 3 - escena 4.mp4',
+    file: 'Parte 3 escena 4.mp4',
     part: 3,
     scene: 4,
     type: 'video',
