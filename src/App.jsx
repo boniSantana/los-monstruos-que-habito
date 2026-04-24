@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import './App.css'
-import { Analytics } from "@vercel/analytics/next"
+import { Analytics } from "@vercel/analytics/react"
 
 const scenes = [
   { file: 'Parte 1 escena 1.mp4', part: 1, scene: 1, type: 'video' },
