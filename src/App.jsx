@@ -388,6 +388,7 @@ function App() {
             ref={registerVideo(0)}
             src="/videos/Portada.mp4"
             muted={!soundEnabled}
+            onClick={togglePause}
             loop
             playsInline
           />
@@ -445,6 +446,7 @@ function App() {
                   src={`/videos/${s.file}`}
                   muted={!soundEnabled}
                   playsInline
+                  onClick={togglePause}
                   onLoadedMetadata={() => handleVideoLoadedMetadata(i, slideIdx)}
                   onTimeUpdate={() => handleVideoTimeUpdate(i, slideIdx)}
                   onEnded={() => handleVideoEnd(i, slideIdx)}
@@ -455,6 +457,7 @@ function App() {
   <>
     <video
       ref={registerVideo(slideIdx)}
+      onClick={togglePause}
       src={`/videos/${s.file}`}
       muted={!soundEnabled}
       playsInline
